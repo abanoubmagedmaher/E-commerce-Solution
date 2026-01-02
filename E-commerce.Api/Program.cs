@@ -6,7 +6,7 @@ namespace E_commerce.Api
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -47,7 +47,8 @@ namespace E_commerce.Api
             var logger = services.GetRequiredService<ILogger<Program>>();
             try
             {
-                 context.Database.Migrate();
+                await  context.Database.MigrateAsync();
+                await StoreContextSeed.SeedAsync(context);
             }
             catch (Exception ex)
             {
@@ -55,7 +56,7 @@ namespace E_commerce.Api
                 logger.LogError(ex, "An error occurred during migration");
             }
             #endregion
-            app.Run();
+            await app.RunAsync();
         }
     }
 }

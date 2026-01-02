@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastrucure.Data.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    [Migration("20260102110340_AddProductEntity")]
+    [Migration("20260102124543_AddProductEntity")]
     partial class AddProductEntity
     {
         /// <inheritdoc />
@@ -41,7 +41,7 @@ namespace Infrastrucure.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("PicureUrl")
+                    b.Property<string>("PictureUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
