@@ -1,5 +1,5 @@
-
-using E_commerce.Api.Data;
+using Core.Interfaces;
+using Infrastrucure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace E_commerce.Api
@@ -21,6 +21,9 @@ namespace E_commerce.Api
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+
+            builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -37,6 +40,21 @@ namespace E_commerce.Api
 
             app.MapControllers();
 
+            #region Handel The AutoMigration
+            using var scope = app.Services.CreateScope();
+            var services = scope.ServiceProvider;
+            var context = services.GetRequiredService<StoreContext>();
+            var logger = services.GetRequiredService<ILogger<Program>>();
+            try
+            {
+                 context.Database.Migrate();
+            }
+            catch (Exception ex)
+            {
+
+                logger.LogError(ex, "An error occurred during migration");
+            }
+            #endregion
             app.Run();
         }
     }
