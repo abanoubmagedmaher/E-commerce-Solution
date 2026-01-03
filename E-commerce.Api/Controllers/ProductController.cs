@@ -42,6 +42,7 @@ namespace E_commerce.Api.Controllers
             return Ok(await _brandRepo.ListAllAsync());
         }
 
+
         [HttpGet("types")]
         public async Task<ActionResult<List<ProductType>>> GetProductTypes()
         {
