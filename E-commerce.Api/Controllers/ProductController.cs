@@ -28,9 +28,9 @@ namespace E_commerce.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Product>>> GetProducts(string? sort,int? brandId, int? typeId )
+        public async Task<ActionResult<List<Product>>> GetProducts([FromQuery] ProductSpecParams productSpecParams)
         {
-            var spec = new ProductWithTypesAndBrandsSpecifications(sort, brandId, typeId);
+            var spec = new ProductWithTypesAndBrandsSpecifications(productSpecParams);
             var products = await _productRepo.ListAsyncSpec(spec) ;
             return Ok( _mapper.Map<IReadOnlyList<Product>,IReadOnlyList<ProductToReturnDto>> (products));
         }

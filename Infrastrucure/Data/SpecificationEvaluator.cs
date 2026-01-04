@@ -28,7 +28,14 @@ namespace Infrastrucure.Data
             if (spec.OrderByDescending != null)
             {
                 query = query.OrderByDescending(spec.OrderByDescending);
-            } 
+            }
+            #endregion
+
+            #region Paging
+            if (spec.IsPagingEnabled)
+            {
+                query = query.Skip(spec.Skip).Take(spec.Take);
+            }
             #endregion
             query = spec.Includes.Aggregate(query,(current,include) => current.Include(include));
             return query;
