@@ -1,6 +1,8 @@
-﻿using Core.Entities;
+﻿using AutoMapper;
+using Core.Entities;
 using Core.Interfaces;
 using Core.Specifications;
+using E_commerce.Api.Dtos;
 using Infrastrucure.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,12 +17,14 @@ namespace E_commerce.Api.Controllers
         private readonly IGenericRepository<Product> _productRepo;
         private readonly IGenericRepository<ProductBrand> _brandRepo;
         private readonly IGenericRepository<ProductType> _typeRepo;
+        private readonly IMapper _mapper;
 
-        public ProductController(IGenericRepository<Product> ProductRepo, IGenericRepository<ProductBrand> BrandRepo, IGenericRepository<ProductType> TypeRepo)
+        public ProductController(IGenericRepository<Product> ProductRepo, IGenericRepository<ProductBrand> BrandRepo, IGenericRepository<ProductType> TypeRepo,IMapper mapper)
         {
             _productRepo = ProductRepo;
             _brandRepo = BrandRepo;
             _typeRepo = TypeRepo;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -32,11 +36,11 @@ namespace E_commerce.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        public async Task<ActionResult<ProductToReturnDto>> GetProduct(int id)
         {
             var spec = new ProductWithTypesAndBrandsSpecifications(id);
             var product = await _productRepo.GetEntityWithSpec(spec);
-            return Ok(product) ;
+            return Ok( _mapper.Map<Product, ProductToReturnDto>(product)) ;
         }
 
         [HttpGet("brands")]
