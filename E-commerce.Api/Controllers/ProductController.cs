@@ -34,7 +34,8 @@ namespace E_commerce.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            var product = await _productRepo.GetByIdAsync(id);
+            var spec = new ProductWithTypesAndBrandsSpecifications(id);
+            var product = await _productRepo.GetEntityWithSpec(spec);
             return Ok(product) ;
         }
 
