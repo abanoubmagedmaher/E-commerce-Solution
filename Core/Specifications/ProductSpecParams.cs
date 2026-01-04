@@ -20,6 +20,12 @@ namespace Core.Specifications
             get => _PageSize;
             set => _PageSize = value > MaxPageSize ? MaxPageSize : value;
         }
-     
+
+        private string _search;
+        public string Search
+        {
+            get => _search;
+            set => _search = value.ToLower();
+        }
     }
 }
