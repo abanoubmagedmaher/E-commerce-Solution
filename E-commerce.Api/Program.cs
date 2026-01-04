@@ -26,6 +26,15 @@ namespace E_commerce.Api
             builder.Services.AddScoped(typeof(IGenericRepository<>),typeof(GenericRepository<>));
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+            builder.Services.AddCors(opt =>
+            {
+                opt.AddPolicy("CorePolicy", policy =>
+                {
+                    policy.AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowAnyOrigin();
+                });
+            });
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -38,6 +47,7 @@ namespace E_commerce.Api
             //app.UseStatusCodePagesWithReExecute("/errors/{0}");
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseCors("CorePolicy");
             app.UseAuthorization();
 
 
