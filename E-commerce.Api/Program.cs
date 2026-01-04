@@ -36,7 +36,7 @@ namespace E_commerce.Api
             }
 
             app.UseHttpsRedirection();
-
+            app.UseStaticFiles();
             app.UseAuthorization();
 
 
