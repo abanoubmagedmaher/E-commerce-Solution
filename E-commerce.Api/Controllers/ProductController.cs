@@ -32,7 +32,7 @@ namespace E_commerce.Api.Controllers
         {
             var spec = new ProductWithTypesAndBrandsSpecifications();
             var products = await _productRepo.ListAsyncSpec(spec) ;
-            return Ok(products);
+            return Ok( _mapper.Map<IReadOnlyList<Product>,IReadOnlyList<ProductToReturnDto>> (products));
         }
 
         [HttpGet("{id}")]
