@@ -1,5 +1,8 @@
+using Core.Identity;
 using Core.Interfaces;
 using Infrastrucure.Data;
+using Infrastrucure.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace E_commerce.Api
@@ -21,6 +24,23 @@ namespace E_commerce.Api
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+
+            #region Identity DbContext
+            builder.Services.AddDbContext<AppIdentityDbContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityConnection"));
+            });
+            builder.Services.AddIdentityCore<AppUser>(opt =>
+            {
+
+            })
+                .AddEntityFrameworkStores<AppIdentityDbContext>()
+                .AddSignInManager<SignInManager<AppUser>>()
+                ;
+            builder.Services.AddAuthentication();
+            builder.Services.AddAuthorization(); 
+            #endregion
+
 
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped(typeof(IGenericRepository<>),typeof(GenericRepository<>));
@@ -57,10 +77,14 @@ namespace E_commerce.Api
             using var scope = app.Services.CreateScope();
             var services = scope.ServiceProvider;
             var context = services.GetRequiredService<StoreContext>();
+            var identity= services.GetRequiredService<AppIdentityDbContext>();  
+            var userManager= services.GetRequiredService<UserManager<AppUser>>();
             var logger = services.GetRequiredService<ILogger<Program>>();
             try
             {
                 await  context.Database.MigrateAsync();
+                await identity.Database.MigrateAsync();
+                await AppIdentityDbContextSeed.SeedUserAsync(userManager);
                 await StoreContextSeed.SeedAsync(context);
             }
             catch (Exception ex)
