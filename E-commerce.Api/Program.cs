@@ -2,6 +2,7 @@ using Core.Identity;
 using Core.Interfaces;
 using Infrastrucure.Data;
 using Infrastrucure.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,9 +36,24 @@ namespace E_commerce.Api
 
             })
                 .AddEntityFrameworkStores<AppIdentityDbContext>()
-                .AddSignInManager<SignInManager<AppUser>>()
-                ;
-            builder.Services.AddAuthentication();
+                .AddSignInManager<SignInManager<AppUser>>();
+                
+
+            var jwt= builder.Configuration.GetSection("Token");
+
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        ValidateLifetime = true,
+                        IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Token:Key"])),
+                        ValidIssuer = jwt["Issuer"],
+                        ValidateIssuer = true,
+                        ValidateAudience = false
+                    };
+                });
             builder.Services.AddAuthorization(); 
             #endregion
 
@@ -45,6 +61,7 @@ namespace E_commerce.Api
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped(typeof(IGenericRepository<>),typeof(GenericRepository<>));
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            builder.Services.AddScoped<ITokenService, Infrastrucure.Services.TokenService>();
 
             builder.Services.AddCors(opt =>
             {
@@ -68,6 +85,9 @@ namespace E_commerce.Api
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCors("CorePolicy");
+
+            app.UseAuthentication();
+            app.UseRouting();
             app.UseAuthorization();
 
 
