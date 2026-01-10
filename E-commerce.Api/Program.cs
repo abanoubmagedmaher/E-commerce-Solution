@@ -62,7 +62,7 @@ namespace E_commerce.Api
             builder.Services.AddScoped(typeof(IGenericRepository<>),typeof(GenericRepository<>));
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             builder.Services.AddScoped<ITokenService, Infrastrucure.Services.TokenService>();
-
+            builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
             builder.Services.AddCors(opt =>
             {
                 opt.AddPolicy("CorePolicy", policy =>
