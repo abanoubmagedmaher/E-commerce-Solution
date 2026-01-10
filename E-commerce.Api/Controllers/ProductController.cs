@@ -19,13 +19,18 @@ namespace E_commerce.Api.Controllers
         private readonly IGenericRepository<ProductBrand> _brandRepo;
         private readonly IGenericRepository<ProductType> _typeRepo;
         private readonly IMapper _mapper;
+        private readonly IProductService _productService;
 
-        public ProductController(IGenericRepository<Product> ProductRepo, IGenericRepository<ProductBrand> BrandRepo, IGenericRepository<ProductType> TypeRepo,IMapper mapper)
+        public ProductController(IGenericRepository<Product> ProductRepo,
+            IGenericRepository<ProductBrand> BrandRepo, IGenericRepository<ProductType> TypeRepo,
+            IMapper mapper , IProductService productService
+            )
         {
             _productRepo = ProductRepo;
             _brandRepo = BrandRepo;
             _typeRepo = TypeRepo;
             _mapper = mapper;
+            _productService = productService;
         }
 
         [HttpGet]
@@ -57,6 +62,13 @@ namespace E_commerce.Api.Controllers
         public async Task<ActionResult<List<ProductType>>> GetProductTypes()
         {
             return Ok(await _typeRepo.ListAllAsync());
+        }
+
+        [HttpPost("createProduct")]
+        public async Task<ActionResult<Product>> CreateProduct(Product product)
+        {
+            var createdProduct = await _productService.CreatAsync(product);
+            return Ok(createdProduct);
         }
     }
 }
